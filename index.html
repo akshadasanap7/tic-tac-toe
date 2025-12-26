@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tic Tac Toe</title>
+
+<style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background: radial-gradient(circle at top, #0f2027, #203a43, #2c5364);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        color: #fff;
+    }
+
+    .container {
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(10px);
+        padding: 30px;
+        border-radius: 16px;
+        text-align: center;
+        width: 340px;
+        box-shadow: 0 0 25px rgba(0,0,0,0.4);
+    }
+
+    h2 {
+        margin-bottom: 12px;
+        letter-spacing: 1px;
+    }
+
+    .board {
+        display: grid;
+        grid-template-columns: repeat(3, 95px);
+        gap: 10px;
+        justify-content: center;
+        margin: 20px 0;
+    }
+
+    .cell {
+        width: 95px;
+        height: 95px;
+        background: rgba(255,255,255,0.85);
+        color: #111;
+        font-size: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        border-radius: 14px;
+        font-weight: bold;
+        transition: transform 0.2s, background 0.2s;
+    }
+
+    .cell:hover {
+        transform: scale(1.05);
+        background: #ffe082;
+    }
+
+    button {
+        padding: 12px 22px;
+        border: none;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #ff512f, #f09819);
+        cursor: pointer;
+        font-weight: bold;
+        color: #000;
+        letter-spacing: 1px;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2 id="status">Player X's Turn</h2>
+
+    <div class="board">
+        <div class="cell" onclick="play(0)"></div>
+        <div class="cell" onclick="play(1)"></div>
+        <div class="cell" onclick="play(2)"></div>
+        <div class="cell" onclick="play(3)"></div>
+        <div class="cell" onclick="play(4)"></div>
+        <div class="cell" onclick="play(5)"></div>
+        <div class="cell" onclick="play(6)"></div>
+        <div class="cell" onclick="play(7)"></div>
+        <div class="cell" onclick="play(8)"></div>
+    </div>
+
+    <button onclick="resetGame()">Restart Game</button>
+</div>
+
+<script>
+    let board = ["","","","","","","","",""];
+    let currentPlayer = "X";
+    let gameActive = true;
+
+    const winPatterns = [
+        [0,1,2],[3,4,5],[6,7,8],
+        [0,3,6],[1,4,7],[2,5,8],
+        [0,4,8],[2,4,6]
+    ];
+
+    console.info("🎮 Tic Tac Toe Loaded");
+
+    function play(index) {
+        if (!gameActive) {
+            console.warn("Game already finished");
+            return;
+        }
+
+        if (board[index] !== "") {
+            console.warn("Cell already filled:", index);
+            return;
+        }
+
+        board[index] = currentPlayer;
+        document.getElementsByClassName("cell")[index].innerText = currentPlayer;
+
+        console.log(`Player ${currentPlayer} clicked cell ${index}`);
+        console.table(board);
+
+        if (checkWin()) {
+            console.log(`🏆 Winner is Player ${currentPlayer}`);
+            document.getElementById("status").innerText =
+                `🎉 Player ${currentPlayer} Wins!`;
+            gameActive = false;
+            return;
+        }
+
+        if (!board.includes("")) {
+            console.warn("😐 Match Draw");
+            document.getElementById("status").innerText = "😐 It's a Draw!";
+            gameActive = false;
+            return;
+        }
+
+        currentPlayer = currentPlayer === "X" ? "O" : "X";
+        document.getElementById("status").innerText =
+            `Player ${currentPlayer}'s Turn`;
+
+        console.info("Turn changed to:", currentPlayer);
+    }
+
+    function checkWin() {
+        const result = winPatterns.some(pattern =>
+            pattern.every(i => board[i] === currentPlayer)
+        );
+        console.log("Win check:", result);
+        return result;
+    }
+
+    function resetGame() {
+        console.info("🔁 Game Reset");
+        board = ["","","","","","","","",""];
+        gameActive = true;
+        currentPlayer = "X";
+        document.getElementById("status").innerText = "Player X's Turn";
+        document.querySelectorAll(".cell").forEach(cell => cell.innerText = "");
+        console.table(board);
+    }
+</script>
+
+</body>
+</html>
+
